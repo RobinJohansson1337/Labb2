@@ -1,5 +1,28 @@
 import React, { useContext, useReducer, useCallback, useMemo, useState } from "react";
 import "./styles.css";
+import styled from 'styled-components';
+
+// StyledComponents
+const Button = styled.button`
+  font-family: sans-serif;
+  font-size: 1.3rem;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 10px;
+  color: red;
+  &:hover {
+    color: blue;
+  }
+`
+
+const Header = styled.h1`
+  font-family: sans-serif;
+  font-size: 2rem;
+  color: black;
+  &:hover {
+    color: orange;
+  }
+`
 
 const initialStateValue = 50;
 const init = (initialValue) => initialValue;
@@ -34,6 +57,17 @@ export default function App() {
   const inCreaseWith = () => dispatch({ type: "increase" });
   const handleReset = () => dispatch({ type: "reset" });
 
+  // useMemo
+  const [number, setNumber] = useState(0);
+  const [dark, setDark] = useState(false);
+  const doubleNumber = useMemo(() => {
+    return slowFunction(number)
+  }, [number])
+  const themeStyles = {
+    backgroundColor: dark ? 'black' : 'white',
+    color: dark ? 'white' : 'black'
+  }
+
   return (    
     <div>
       <h1 ref={measuredRef}>Hello, world</h1>
@@ -56,9 +90,41 @@ export default function App() {
       </ThemeContext.Provider>
 
       <CallData />
-    </div>
 
+      <h1>useMemo</h1>
+      <input type="number" value={number} onChange={e => setNumber(parseInt(e.target.value))}></input>
+      <button onClick={() => setDark(prevDark => !prevDark)}>Change Theme</button>
+      <div style={themeStyles}>{doubleNumber}</div>
+
+      <UseStyledComponentsHeader />
+      <UseStyledComponentsButton />
+    </div>
   );
+}
+
+// styledComponents
+function UseStyledComponentsHeader(){
+  return (
+    <div>
+      <Header>Header</Header>
+    </div>
+  )
+}
+
+// styledComponents
+function UseStyledComponentsButton(){
+  return (
+    <div>
+      <Button>StyledComponents Button</Button>
+    </div>
+  )
+}
+
+// useMemo
+function slowFunction(num) {
+  console.log('Calling Slow Function')
+  for (let i = 0; i <= 1000000000; i++) {}
+  return num * 2
 }
 
 function CallData(){
